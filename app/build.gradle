@@ -1,0 +1,104 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//dexcount plugin needs to be applied after android plugin
+apply plugin: 'com.getkeepsafe.dexcount'
+apply from: '../jacoco.gradle'
+apply from: '../testlogging.gradle'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        applicationId "io.github.ajoz.k4ap"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        //multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
+    dexcount {
+        format = "tree"
+        includeClasses = true
+        includeFieldCount = true
+        includeTotalMethodCount = true
+        orderByMethodCount = true
+        verbose = false
+        maxTreeDepth = Integer.MAX_VALUE
+        runOnEachAssemble = true
+        maxMethodCount = 64000
+    }
+}
+
+dependencies {
+    //misc libs:
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    //app:
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    //test:
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    //java specific:
+    testCompile "org.robolectric:robolectric:3.3.1"
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-core:1.10.19"
+    testCompile "org.hamcrest:hamcrest-core:1.3"
+    testCompile "org.hamcrest:hamcrest-library:1.3"
+    testCompile "org.hamcrest:hamcrest-integration:1.3"
+
+    //kotlin specific:
+    // property based testing for kotlin (similar to ScalaTest)
+    // https://github.com/kotlintest/kotlintest
+    testCompile "io.kotlintest:kotlintest:2.0.0"
+    // hamcrest matchers in a kotlin way
+    // https://github.com/npryce/hamkrest
+    testCompile "com.natpryce:hamkrest:1.3.0.0"
+    // BDD assertion library for kotlin
+    // https://github.com/winterbe/expekt
+    testCompile "com.winterbe:expekt:0.5.0"
+    // "fluent assertions" library for kotlin
+    // https://github.com/MarkusAmshove/Kluent
+    testCompile "org.amshove.kluent:kluent:1.19"
+    // A small library that provides helper functions to work with Mockito in Kotlin.
+    // https://github.com/nhaarman/mockito-kotlin
+    testCompile "com.nhaarman:mockito-kotlin:1.4.0"
+}
+repositories {
+    mavenCentral()
+}
