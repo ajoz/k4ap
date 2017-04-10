@@ -4,7 +4,9 @@ package io.github.ajoz.k4ap.kotlininterop;
 import edu.emory.mathcs.backport.java.util.Collections;
 import io.github.ajoz.k4ap.javainterop.misc.*;
 import io.github.ajoz.k4ap.kotlininterop.misc.PersonJava;
+import kotlin.Function;
 import kotlin.jvm.functions.Function1;
+import kotlin.reflect.KProperty1;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -66,9 +68,15 @@ public class KotlinInteropTest {
 
     @Test
     public void shouldReturnAFunction() throws Exception {
-        final Function1<String, Integer> func = FunctionsKotlin.INSTANCE.returnAFunction();
-        final Integer functionValue = func.invoke("Kotlin4AndroidProgrammers");
-        System.out.println("Value returned by this function: " + functionValue);
+        final Function1<String, Integer> func1 = FunctionsKotlin.INSTANCE.returnAFunction();
+        final Integer value1 = func1.invoke("Kotlin4AndroidProgrammers");
+        System.out.println("Value returned by this function: " + value1);
+
+        //in Kotlin this function returns a reference
+        //KProperty1 extends Function1
+        final KProperty1<String, Integer> func9 = FunctionsKotlin.INSTANCE.returnAFunction9();
+        final Integer value9 = func9.invoke("Kotlin4AndroidProgrammers");
+        System.out.println("Value returned by this function: " + value9);
     }
 
     @Test

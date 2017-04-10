@@ -67,9 +67,7 @@ class JavaInteropTest {
         })
 
         //shorter and better
-        FunctionsJava.acceptAFunction("JUG Lodz") {
-            s -> s.length
-        }
+        FunctionsJava.acceptAFunction("JUG Lodz", String::length)
     }
 
     @Test
