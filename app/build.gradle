@@ -58,7 +58,14 @@ android {
     }
 }
 
+configurations {
+    ktlint
+}
+
 dependencies {
+    //kotlin lint
+    ktlint 'com.github.shyiko:ktlint:0.6.1'
+
     //misc libs:
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -101,4 +108,24 @@ dependencies {
 }
 repositories {
     mavenCentral()
+}
+
+task ktlint(type: JavaExec) {
+    group = "lint"
+    description = "Do a lint check for Kotlin files"
+
+    main = "com.github.shyiko.ktlint.Main"
+    classpath = configurations.ktlint
+    args "src/**/*.kt"
+}
+
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec) {
+    group = "lint"
+    description = "Tries to perform corrections to Kotlin files with issues marked by ktlint (might not change all)"
+
+    main = "com.github.shyiko.ktlint.Main"
+    classpath = configurations.ktlint
+    args "-F", "src/**/*.kt"
 }

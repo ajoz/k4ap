@@ -13,7 +13,6 @@ object DummyContent {
                     createDetails(position)
             )
 
-
     private fun createDetails(position: Int) =
             (0..position - 1)
                     .fold(StringBuilder("Details about Item: $position")) {
