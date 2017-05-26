@@ -16,7 +16,7 @@ buildscript {
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
 
         // there are some issues with ktlint gradle plugin
-//        classpath "gradle.plugin.org.jlleitschuh.gradle:ktlint-gradle:1.0.1"
+        // classpath "gradle.plugin.org.jlleitschuh.gradle:ktlint-gradle:1.0.1"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

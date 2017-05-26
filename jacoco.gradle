@@ -3,8 +3,17 @@ apply plugin: 'jacoco'
 /**
  * The correct path of the report is $rootProjectDir/app/build/reports/jacoco/index.html
  * to run this task use: ./gradlew clean jacocoTestReport
+ *
+ * Unit tests generate .exec file and Android Instrumentation generates .ec file. We do not need
+ * to convert from one format to another. We just need to ensure that that the Android Instrumentation
+ * coverage task is executed first (because there is almost none possibilities to configure it). Next
+ * we need to run unit tests (Robolectric, plain JUnit) and then create coverage data with both
+ * files (ec and exec).
+ *
+ * This is why our jacocoTestReport relies on "createDebugCoverageReport" task.
+ *
  */
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) { 
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     group = "reporting"
     description = "Generate unified Jacoco code coverage report"
 
@@ -52,5 +61,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     executionData = fileTree(dir: "$buildDir", includes: [
             "jacoco/testDebugUnitTest.exec", //we use "debug" build type for test coverage (can be other)
             "outputs/code-coverage/connected/*coverage.ec"
+            // Android Gradle plugin 2.2.+ generates a coverage file for each execution
+            // generated files have device / emulator in the name, so we need to pass every file
+            // we know that the file ends with *coverage.ec
     ])
 }
